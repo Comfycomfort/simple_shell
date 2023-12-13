@@ -1,45 +1,29 @@
-#include "shell.h"
+#ifndef SHELL_H
+#define SHELL_H
 
-/*
- * main - creates  mini shell environment that accepts user commands
- * Return: 0
- */
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include <signal.h>
+#include <string.h>
 
-int main(void)
-{
-	char *cmd = NULL;
-	int i, rd, status;
+/* global variable for environmental variables */
+extern char **environ;
 
-	do {
-		/* prompt user till they hit Ctrl-D */
-		printf("Comf Shell$ ");
+/* some function prototypes */
+int _getline(char **cmd);
+char **_strtok(char *cmd);
+void _execve(char cmd[]);
+char *_strdup(char *str);
+char *c_strdup(char *str, int cs);
+char * _getenv();
+char *_which(char *cmd);
 
-		rd = _getline(&cmd);
-		if (rd == 0)
-		{
-			printf("Hmm... Couldn't read what you wrote...\n");
-			return (-1);
-		}
+#endif
 
-		i = 0;
-		if (cmd[i] == 0) /* if Ctrl-D, print newline and exit */
-		{
-			printf("\n");
-			exit(99);
-		}
-		while (cmd[i] != '\n')
-			i++;
-		cmd[i] = '\0';
-
-		/* execute child process/cmd before reprompting */
-		if (fork() == 0)
-		{
-			_execve(cmd);
-		}
-		else
-			wait(&status);
-		free(cmd);
-	} while (rd != EOF);
-	free(cmd);
-	return (0);
-}
