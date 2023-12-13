@@ -1,0 +1,21 @@
+#include "shell.h"
+
+/**
+ * print_argvs - print all argvs given to the program without using argc
+ * @ac: Number of arguments
+ * @av: Array of strings representing arguments
+ *
+ * Return: 0 on success
+ */
+void print_argvs(int ac, char **av)
+{
+    int i;
+    (void)ac; // Unused parameter
+
+    i = 0;
+    while (av[i] != NULL) {
+        printf("%s\n", av[i++]);
+    }
+}
+
+
