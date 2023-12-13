@@ -1,0 +1,49 @@
+#include "shell.h"
+
+/**
+ * _exec_command - executes the command passed as argument
+ * @cmd: Array containing the command and its arguments
+ */
+void _exec_command(char *cmd[])
+{
+    if (execve(cmd[0], cmd, NULL) == -1)
+    {
+        perror("Execution Error");
+    }
+}
+
+/**
+ * main - executes a command in different children. Each child
+ *        should be created by the same process (the father).
+ *        Wait for a child to exit before creating a new child.
+ * Return: 0 on success
+ */
+int main(void)
+{
+    pid_t child_pid;
+    char *cmd[] = {"/bin/ls", "-l", "/usr", NULL};
+    char *buffer = NULL;
+    size_t size = 0;
+
+    while (getline(&buffer, &size, stdin) > 0)
+    {
+        child_pid = fork(); /* creates children */
+        if (child_pid == -1)
+        {
+            perror("Error creating child:");
+            free(buffer); // Free allocated memory before exiting
+            return (1);
+        }
+        if (child_pid == 0) /* if child process, execute */
+        {
+            sleep(1);
+            _exec_command(cmd);
+            free(buffer); // Free allocated memory before exiting
+            exit(EXIT_SUCCESS); // Exit child process after execution
+        }
+    }
+
+    free(buffer); // Free allocated memory before exiting
+    return (0);
+}
+
