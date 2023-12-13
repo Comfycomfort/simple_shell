@@ -1,0 +1,56 @@
+#include "shell.h"
+
+/**
+ * _strtok - Splits a string into an array of words.
+ * @cmd: String to be tokenized.
+ * Return: Array of tokens on success, NULL on failure.
+ */
+char **_strtok(char *cmd)
+{
+    char *token = NULL;
+    char **tokens = NULL;
+    int num_tokens = 1, token_index = 0, cmd_index = 0;
+    size_t j;
+
+    /* Count the number of tokens to allocate memory */
+    while (cmd[cmd_index] != '\0')
+    {
+        if (cmd[cmd_index] != ' ' && (cmd[cmd_index + 1] == ' ' || cmd[cmd_index + 1] == '\0'))
+            num_tokens++;
+        cmd_index++;
+    }
+    tokens = malloc(sizeof(char *) * num_tokens);
+    if (tokens == NULL)
+        return (NULL);
+
+    /* Tokenize the string and store tokens in the tokens array */
+    token = strtok(cmd, " ");
+    while (token != NULL)
+    {
+        tokens[token_index] = malloc(sizeof(char) * (strlen(token) + 1));
+        if (tokens[token_index] == NULL)
+        {
+            /* Free previously allocated memory on failure */
+            while (token_index > 0)
+                free(tokens[--token_index]);
+            free(tokens);
+            return (NULL);
+        }
+
+        /* Copy token into tokens array */
+        j = 0;
+        while (j < strlen(token))
+        {
+            tokens[token_index][j] = token[j];
+            j++;
+        }
+        tokens[token_index][j] = '\0';
+        token = strtok(NULL, " ");
+        token_index++;
+    }
+    tokens[token_index] = NULL;
+
+    return (tokens);
+}
+
+
